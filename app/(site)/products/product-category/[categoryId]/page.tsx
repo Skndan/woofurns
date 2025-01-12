@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import ProductCategoryForm from "./_form";
 import { CategoryService } from "../category.service";
 import FormCardSkeleton from "@/components/form-card-skeleton";
+import { ProductCategory } from "@/types/product";
 
 const ProfileForm = ({
     params
@@ -12,6 +13,7 @@ const ProfileForm = ({
 }) => {
 
     const [data, setData] = useState(null);
+    const [categories, setCategories] = useState<ProductCategory[]>([]);
 
     const [loading, setLoading] = useState(true)
     useEffect(() => {
@@ -22,18 +24,18 @@ const ProfileForm = ({
                 setData(response.data)
             }
 
+            const response = await CategoryService.getProductCategory();
+            setCategories(response.data.content)
+
             setLoading(false);
         })()
     }, [params.categoryId])
-
-
-
 
     return (
         <div className="flex-col">
             <div className="flex-1 space-y-4">
                 {
-                    loading ? <FormCardSkeleton /> : <ProductCategoryForm initialData={data} />
+                    loading ? <FormCardSkeleton /> : <ProductCategoryForm initialData={data} categories={categories} />
                 }
             </div>
         </div>

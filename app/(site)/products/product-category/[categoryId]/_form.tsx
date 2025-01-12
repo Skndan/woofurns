@@ -64,15 +64,18 @@ const formSchema = z.object({
   name: z.string(),
   slug: z.string(),
   featured: z.boolean(),
-  status: z.string()
+  status: z.string(),
+  parent: z.any()
 });
 
 type CategoryFormValues = z.infer<typeof formSchema>
 
 export default function ProductCategoryForm({
   initialData,
+  categories
 }: {
   initialData: ProductCategory | null;
+  categories: ProductCategory[] | [];
 }) {
 
   const router = useRouter();
@@ -107,6 +110,7 @@ export default function ProductCategoryForm({
       slug: data.slug,
       featured: data.featured,
       status: data.status,
+      parent: data.parent 
     };
     formData.append('data', JSON.stringify(dd));
     formData.append("file", data.file);
@@ -267,6 +271,30 @@ export default function ProductCategoryForm({
                   </FormItem>
                 )}
               />
+
+              <FormField
+                control={form.control}
+                name="parent.id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Parent Category</FormLabel>
+                    <Select disabled={loading} onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue defaultValue={field.value} placeholder="Select Categoy" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {categories.map((category) => (
+                          <SelectItem key={category.id} value={category.id}>{category.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <FormField
                 control={form.control}
                 name="file"
