@@ -20,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-import { ProductCategory } from '@/types/product';
+import { FileInfo, ProductCategory } from '@/types/product';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -28,6 +28,8 @@ import * as z from 'zod';
 import { CategoryService } from '../category.service';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import NetworkImage from '@/components/ui/cells/network-image-cell';
+import Image from 'next/image';
 
 const MAX_FILE_SIZE = 5000000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -81,6 +83,8 @@ export default function ProductCategoryForm({
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<FileInfo | null>(initialData?.image ?? null); // Pre-fill with existing image  
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -100,9 +104,19 @@ export default function ProductCategoryForm({
   const toastMessage = initialData ? 'Category updated.' : 'Category created.';
   const action = initialData ? 'Save changes' : 'Create';
 
+  const handleFileChange = (event: any) => {
+    const uploadedFile = event.target.files[0];
+
+    // Show a preview of the selected file
+    if (uploadedFile) {
+      const previewUrl = URL.createObjectURL(uploadedFile);
+      setImageUrl(previewUrl);
+    }
+  };
+
   async function onSubmit(data: CategoryFormValues) {
     setLoading(true);
-    var formData = new FormData();
+    var formData = new FormData(); 
 
     var dd = {
       code: data.code,
@@ -110,26 +124,18 @@ export default function ProductCategoryForm({
       slug: data.slug,
       featured: data.featured,
       status: data.status,
-      parent: data.parent 
+      parent: data.parent
     };
+
+    if (data.parent.id == null) {
+      dd.parent = null;
+    }
+
     formData.append('data', JSON.stringify(dd));
     formData.append("file", data.file);
 
     if (initialData) {
       var response = await CategoryService.putProductCategory(initialData.id, formData);
-      if (response.status !== 201) {
-        toast.error("Something went wrong");
-        setLoading(false);
-        return;
-      }
-
-      toast.success(toastMessage);
-      router.refresh();
-      router.push(`../product-category`);
-      setLoading(false);
-    } else {
-
-      var response = await CategoryService.postProductCategory(formData);
       if (response.status !== 200) {
         toast.error("Something went wrong");
         setLoading(false);
@@ -137,8 +143,21 @@ export default function ProductCategoryForm({
       }
 
       toast.success(toastMessage);
-      router.refresh();
-      router.push(`../product-category`);
+      // router.refresh();
+      // router.push(`../product-category`);
+      setLoading(false);
+    } else {
+
+      var response = await CategoryService.postProductCategory(formData);
+      if (response.status !== 201) {
+        toast.error("Something went wrong");
+        setLoading(false);
+        return;
+      }
+
+      toast.success(toastMessage);
+      // router.refresh();
+      // router.push(`../product-category`);
       setLoading(false);
     }
   }
@@ -278,7 +297,15 @@ export default function ProductCategoryForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Parent Category</FormLabel>
-                    <Select disabled={loading} onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
+                    <Select disabled={loading}
+                      value={field.value} defaultValue={field.value}
+                      onValueChange={(e) => {
+                        if (initialData && e === initialData.id) {
+                          toast.error("Same category can't be a sub-category");
+                          return null; // Prevent selection of the same category
+                        }
+                        field.onChange(e); // Update the field value only if valid
+                      }} >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue defaultValue={field.value} placeholder="Select Categoy" />
@@ -313,14 +340,22 @@ export default function ProductCategoryForm({
                   );
                 }}
               />
+              {imageUrl && (
+                <div>
+                  <Image src={imageUrl} alt="Uploaded" width={56}
+                    height={56} />
+                </div>
+              )}
+              {(initialData && previewUrl && !imageUrl) && (
+                <div>
+                  <NetworkImage src={previewUrl.fileUrl} hash={previewUrl.hash} alt={previewUrl.fileName} />
+                </div>
+              )}
             </div>
             <div className='flex flex-row gap-2'>
               <Button type='reset' variant={'secondary'}>Cancel</Button>
               <Button type='submit'>
-
                 {action}
-
-
               </Button>
             </div>
           </form>

@@ -15,7 +15,7 @@ export const columns: ColumnDef<ProductCategory>[] = [
     header: 'Image',
     cell: ({ row }) => {
       const category = row.original;
-      return <NetworkImage src={category.image.fileUrl} hash={category.image.hash} alt={row.getValue("name")} />;
+      return <NetworkImage src={category.image?.fileUrl} hash={category.image?.hash} alt={row.getValue("name")} />;
     }
   },
   {

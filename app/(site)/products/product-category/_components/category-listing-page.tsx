@@ -15,7 +15,6 @@ import { useSearchParams } from 'next/navigation';
 import { columns } from './category-table/columns';
 import { CategoryService } from '../category.service';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import removeRootIfInChildren from '@/lib/utils/nest-categories'
 import { ProductCategory } from '@/types/product';
 import { CategoryTree } from '@/components/category-tree';
 
@@ -44,7 +43,6 @@ export default function ProductCategoryListingPage({ }: TEmployeeListingPage) {
     const data = response.data;
     setPages(data.totalPages)
     setTotal(data.totalElements)
-    setTreeCategory(removeRootIfInChildren(data.content))
     return data.content;
   };
 
