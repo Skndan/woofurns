@@ -1,11 +1,12 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 import DateTimeCell from '@/components/ui/cells/date-time-cell';
-import { Brand } from '@/types/product';
+import { Attribute } from '@/types/product';
 import StatusCell from '@/components/ui/cells/status-cell';
 import BoolCell from '@/components/ui/cells/bool-cell';
+import StyleCell from '@/components/ui/cells/style-cell';
 
-export const columns: ColumnDef<Brand>[] = [
+export const columns: ColumnDef<Attribute>[] = [
   {
     accessorKey: 'name',
     header: 'Name',
@@ -15,18 +16,9 @@ export const columns: ColumnDef<Brand>[] = [
     header: 'Code',
   },
   {
-    accessorKey: 'slug',
-    header: 'Slug',
-  },
-  {
-    accessorKey: 'featured',
-    header: 'Featured',
-    cell: ({ row }) => <BoolCell status={row.getValue("featured") ?? ""} />
-  },
-  {
-    accessorKey: 'status',
-    header: 'Status',
-    cell: ({ row }) => <StatusCell status={row.getValue("status") ?? ""} />
+    accessorKey: 'style',
+    header: 'Style',
+    cell: ({ row }) => <StyleCell status={row.getValue("style")} />
   },
   {
     accessorKey: 'updatedAt',

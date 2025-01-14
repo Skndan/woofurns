@@ -14,16 +14,16 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { Brand } from '@/types/product';
+import { Attribute } from '@/types/product';
 import { Edit, MoonIcon, MoreHorizontal, PauseCircleIcon, PlayCircleIcon, RotateCcwIcon, Trash, TrashIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { BrandService } from '../../brand.service';
+import { AttributeService } from '../../attribute.service';
 
 interface CellActionProps {
-  data: Brand;
+  data: Attribute;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
@@ -35,7 +35,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const onConfirm = async () => {
     try {
       // setLoading(true);
-      // var response = await brand.changeStatus({
+      // var response = await attribute.changeStatus({
       //   instanceId: data.instanceId,
       //   state: state
       // });
@@ -121,7 +121,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           </DropdownMenuGroup> */}
           <DropdownMenuSeparator />
           <DropdownMenuItem  
-            onClick={() => router.push(`/products/brands/${data.id}`)}
+            onClick={() => router.push(`/products/attribute/${data.id}`)}
           >
             <Edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem>

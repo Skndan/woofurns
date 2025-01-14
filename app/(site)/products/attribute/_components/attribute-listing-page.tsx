@@ -8,17 +8,17 @@ import { DataTableResetFilter } from '@/components/ui/table/data-table-reset-fil
 import { DataTableSearch } from '@/components/ui/table/data-table-search';
 import { cn } from '@/lib/utils';
 import { Plus } from 'lucide-react';
-import Link from 'next/link';
-import { useBrandTableFilters } from './brand-table/use-brand-table-filters';
+import Link from 'next/link'; 
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { columns } from './brand-table/columns'; 
-import { BrandService } from '../brand.service';
+import { columns } from './attribute-table/columns'; 
+import { AttributeService } from '../attribute.service';
+import { useAttributeTableFilters } from './attribute-table/use-attribute-table-filters';
 
 type TEmployeeListingPage = {
 };
 
-export default function BrandListingPage({ }: TEmployeeListingPage) {
+export default function AttributeListingPage({ }: TEmployeeListingPage) {
 
   const searchParams = useSearchParams();
 
@@ -34,7 +34,7 @@ export default function BrandListingPage({ }: TEmployeeListingPage) {
   const [pages, setPages] = useState(0); // Default page size  
 
   const fetchData = async () => {
-    const response = await BrandService.getBrand();
+    const response = await AttributeService.getAttribute();
     const data = response.data;
     setPages(data.totalPages)
     setTotal(data.totalElements)
@@ -55,19 +55,19 @@ export default function BrandListingPage({ }: TEmployeeListingPage) {
     searchQuery,
     setPage,
     setSearchQuery
-  } = useBrandTableFilters();
+  } = useAttributeTableFilters();
 
 
   return (
     <div className="space-y-4">
       <div className="flex items-start justify-between">
         <Heading
-          title={`Brands (${total})`}
-          description="Manage your Brands"
+          title={`Attributes (${total})`}
+          description="Manage your Attributes"
         />
 
         <Link
-          href={'/products/brands/new'}
+          href={'/products/attribute/new'}
           className={cn(buttonVariants({ variant: 'default' }))}
         >
           <Plus className="mr-2 h-4 w-4" /> Add
