@@ -67,7 +67,7 @@ export default function ProductListingPage({ }: TEmployeeListingPage) {
         />
 
         <Link
-          href={'/products/products/new'}
+          href={'/products/new'}
           className={cn(buttonVariants({ variant: 'default' }))}
         >
           <Plus className="mr-2 h-4 w-4" /> Add
