@@ -6,12 +6,14 @@ import { ChevronRight, ChevronDown, Plus } from 'lucide-react'
 import { ProductCategory } from '@/types/product'
 import NetworkImage from './ui/cells/network-image-cell'
 import { Button } from './ui/button'
+import removeRootIfInChildren from '@/lib/utils/nest-categories'
 
 interface CategoryTreeProps {
   categories: ProductCategory[];
 }
 
 export function CategoryTree({ categories }: CategoryTreeProps) {
+  // categories = removeRootIfInChildren(categories)
   return (
     <ul className="space-y-2">
       {categories.map((category) => (

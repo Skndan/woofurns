@@ -30,7 +30,17 @@ export const navItems: NavItem[] = [
         title: 'Category',
         url: '/products/product-category',
         icon: 'pizza'
-      }
+      },
+      {
+        title: 'Tax',
+        url: '/products/tax-rule',
+        icon: 'pizza'
+      },
+      {
+        title: 'Attributes',
+        url: '/products/attribute',
+        icon: 'pizza'
+      },
     ]
   },
 ];

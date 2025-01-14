@@ -4,12 +4,13 @@ import apiClient from '@/lib/api/api-client';
 
 
 interface NetworkImageProps {
-  src: string;
+  src?: string;
   hash?: string;
   alt: string;
+  onBlob?: (blob: Blob) => void;
 }
 
-const NetworkImage = ({ src, hash, alt }: NetworkImageProps) => {
+const NetworkImage = ({ src, hash, alt, onBlob }: NetworkImageProps) => {
   const [imageUrl, setImageUrl] = useState<string>("/fallback.png");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -21,7 +22,11 @@ const NetworkImage = ({ src, hash, alt }: NetworkImageProps) => {
         });
         const blob = await response.data;
         const objectUrl = URL.createObjectURL(blob);
-        console.log(objectUrl);
+        
+        if(onBlob) {
+          onBlob(blob);
+        }
+
         setImageUrl(objectUrl);
       } catch (error) {
         console.error('Error loading image:', error);
