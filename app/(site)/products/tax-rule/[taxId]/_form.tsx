@@ -22,59 +22,37 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Product } from '@/constants/mock-api';
-import { Brand } from '@/types/product';
+import { Tax } from '@/types/product';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { BrandService } from '../brand.service';
+import { TaxService } from '../tax.service';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 
-const MAX_FILE_SIZE = 5000000;
-const ACCEPTED_IMAGE_TYPES = [
-  'image/jpeg',
-  'image/jpg',
-  'image/png',
-  'image/webp'
-];
-
-const status = [
+const taxType = [
   {
-    value: "PRIVATE",
-    label: "Private",
+    value: "PERCENT",
+    label: "Percent",
   },
   {
-    value: "PUBLIC",
-    label: "Public",
+    value: "FLAT",
+    label: "Flat",
   }
 ]
 
 const formSchema = z.object({
-  // image: z
-  //   .any()
-  //   .refine((files) => files?.length == 1, 'Image is required.')
-  //   .refine(
-  //     (files) => files?.[0]?.size <= MAX_FILE_SIZE,
-  //     `Max file size is 5MB.`
-  //   )
-  //   .refine(
-  //     (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
-  //     '.jpg, .jpeg, .png and .webp files are accepted.'
-  //   ),
-  code: z.string().min(2, {
-    message: 'Brand name must be at least 2 characters.'
-  }),
-  name: z.string(),
-  slug: z.string(),
-  featured: z.boolean(),
-  status: z.string()
+  code: z.string(),
+  title: z.string(),
+  value: z.string(),
+  taxType: z.string()
 });
 
-export default function BrandForm({
+export default function TaxForm({
   initialData,
 }: {
-  initialData: Brand | null;
+  initialData: Tax | null;
 }) {
 
   const router = useRouter();
@@ -83,10 +61,9 @@ export default function BrandForm({
 
   const defaultValues = {
     code: initialData?.code || '',
-    name: initialData?.name || '',
-    slug: initialData?.slug || '',
-    status: initialData?.status || '',
-    featured: initialData?.featured || false,
+    title: initialData?.code || '',
+    value: initialData?.code || '',
+    taxType: initialData?.code || '',
   };
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -94,14 +71,14 @@ export default function BrandForm({
     values: defaultValues
   });
 
-  const title = initialData ? 'Edit Brand' : 'Create Brand';
-  const description = initialData ? 'Update Brand.' : 'Add Brand';
-  const toastMessage = initialData ? 'Brand updated.' : 'Brand created.';
+  const title = initialData ? 'Edit Tax' : 'Create Tax';
+  const description = initialData ? 'Update Tax.' : 'Add Tax';
+  const toastMessage = initialData ? 'Tax updated.' : 'Tax created.';
   const action = initialData ? 'Save changes' : 'Create';
 
-  async function onSubmit(values: z.infer<typeof formSchema>) { 
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     if (initialData) {
-      var response = await BrandService.putBrand(initialData.id, values);
+      var response = await TaxService.putTax(initialData.id, values);
       if (response.status !== 200) {
         toast.error("Something went wrong");
         return;
@@ -109,18 +86,18 @@ export default function BrandForm({
 
       toast.success(toastMessage);
       router.refresh();
-      router.push(`../brands`);
+      router.push(`../tax-rule`);
 
     } else {
-      var response = await BrandService.postBrand(values);
-      if (response.status !== 200) {
+      var response = await TaxService.postTax(values);
+      if (response.status !== 201) {
         toast.error("Something went wrong");
         return;
       }
 
       toast.success(toastMessage);
       router.refresh();
-      router.push(`../brands`);
+      router.push(`../tax-rule`);
 
     }
   }
@@ -164,14 +141,32 @@ export default function BrandForm({
 
             <div className="grid md:grid-cols-3 gap-x-8 gap-y-4">
 
+
+
+
+
               <FormField
                 control={form.control}
-                name="name"
+                name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name <span className="text-red-600">*</span></FormLabel>
+                    <FormLabel>Title</FormLabel>
                     <FormControl>
-                      <Input disabled={loading} placeholder="Enter brand name" {...field} />
+                      <Input disabled={loading} placeholder="Enter title" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="value"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Value <span className="text-red-600">*</span></FormLabel>
+                    <FormControl>
+                      <Input disabled={loading} placeholder="Enter value" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -183,7 +178,7 @@ export default function BrandForm({
                 name="code"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>code <span className="text-red-600">*</span></FormLabel>
+                    <FormLabel>Code <span className="text-red-600">*</span></FormLabel>
                     <FormControl>
                       <Input disabled={loading} placeholder="Enter code" {...field} />
                     </FormControl>
@@ -194,22 +189,7 @@ export default function BrandForm({
 
               <FormField
                 control={form.control}
-                name="slug"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Slug</FormLabel>
-                    <FormControl>
-                      <Input disabled={loading} placeholder="Enter slug" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-
-              <FormField
-                control={form.control}
-                name="status"
+                name="taxType"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Status</FormLabel>
@@ -220,38 +200,12 @@ export default function BrandForm({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {status.map((category) => (
-                          <SelectItem key={category.value} value={category.value}>{category.label}</SelectItem>
+                        {taxType.map((tax) => (
+                          <SelectItem key={tax.value} value={tax.value}>{tax.label}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="featured"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Featured</FormLabel>
-                    <FormControl>
-                      <div className="flex h-9 items-center space-x-2   border rounded-md border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50">
-                        <Checkbox
-                          id="terms"
-                          checked={field.value}
-                          onCheckedChange={(s) => {
-                            field.onChange(s);
-                          }}
-                        />
-                        <FormLabel htmlFor="terms">
-                          Is Featured?
-                        </FormLabel>
-                      </div>
-
-
-                    </FormControl>
                   </FormItem>
                 )}
               />

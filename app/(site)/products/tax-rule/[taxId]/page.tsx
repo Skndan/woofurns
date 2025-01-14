@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import BrandForm from "./_form";
-import { BrandService } from "../brand.service";
+import TaxForm from "./_form";
+import { TaxService } from "../tax.service";
 import FormCardSkeleton from "@/components/form-card-skeleton";
 
 const ProfileForm = ({
     params
 }: {
-    params: { brandId: string }
+    params: { taxId: string }
 }) => {
 
     const [data, setData] = useState(null);
@@ -17,14 +17,14 @@ const ProfileForm = ({
     useEffect(() => {
         (async () => {
 
-            if (params.brandId != 'new') {
-                const response = await BrandService.getBrandById(params.brandId);
+            if (params.taxId != 'new') {
+                const response = await TaxService.getTaxById(params.taxId);
                 setData(response.data)
             }
 
             setLoading(false);
         })()
-    }, [params.brandId])
+    }, [params.taxId])
 
 
 
@@ -33,7 +33,7 @@ const ProfileForm = ({
         <div className="flex-col">
             <div className="flex-1 space-y-4">
                 {
-                    loading ? <FormCardSkeleton /> : <BrandForm initialData={data} />
+                    loading ? <FormCardSkeleton /> : <TaxForm initialData={data} />
                 }
             </div>
         </div>

@@ -9,16 +9,16 @@ import { DataTableSearch } from '@/components/ui/table/data-table-search';
 import { cn } from '@/lib/utils';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
-import { useBrandTableFilters } from './brand-table/use-brand-table-filters';
+import { useTaxTableFilters } from './tax-table/use-tax-table-filters';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { columns } from './brand-table/columns'; 
-import { BrandService } from '../brand.service';
+import { columns } from './tax-table/columns'; 
+import { TaxService } from '../tax.service';
 
 type TEmployeeListingPage = {
 };
 
-export default function BrandListingPage({ }: TEmployeeListingPage) {
+export default function TaxListingPage({ }: TEmployeeListingPage) {
 
   const searchParams = useSearchParams();
 
@@ -34,7 +34,7 @@ export default function BrandListingPage({ }: TEmployeeListingPage) {
   const [pages, setPages] = useState(0); // Default page size  
 
   const fetchData = async () => {
-    const response = await BrandService.getBrand();
+    const response = await TaxService.getTax();
     const data = response.data;
     setPages(data.totalPages)
     setTotal(data.totalElements)
@@ -55,19 +55,19 @@ export default function BrandListingPage({ }: TEmployeeListingPage) {
     searchQuery,
     setPage,
     setSearchQuery
-  } = useBrandTableFilters();
+  } = useTaxTableFilters();
 
 
   return (
     <div className="space-y-4">
       <div className="flex items-start justify-between">
         <Heading
-          title={`Brands (${total})`}
-          description="Manage your Brands"
+          title={`Tax (${total})`}
+          description="Manage your Tax rules"
         />
 
         <Link
-          href={'/products/brands/new'}
+          href={'/products/tax-rule/new'}
           className={cn(buttonVariants({ variant: 'default' }))}
         >
           <Plus className="mr-2 h-4 w-4" /> Add
