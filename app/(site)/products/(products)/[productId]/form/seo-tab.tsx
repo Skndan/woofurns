@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Product } from '@/types/product';
+import { Product, Seo } from '@/types/product';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Checkbox } from '@radix-ui/react-checkbox';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@radix-ui/react-select';
@@ -14,25 +14,25 @@ import { z } from 'zod';
 
 
 const formSchema = z.object({
-  title: z.string().min(1),
-  overview: z.string().min(1),
-  description: z.string().min(1),
+  metaTitle: z.string().min(1),
+  metaKeyword: z.string().min(1),
+  metaDescription: z.string().min(1),
 });
 
-type GeneralFormValues = z.infer<typeof formSchema>
+type SeoFormValues = z.infer<typeof formSchema>
 
-export default function GeneralForm({
+export default function SeoForm({
   initialData,
 }: {
-  initialData: Product | null;
+  initialData: Seo | null;
 }) {
 
-  const form = useForm<GeneralFormValues>({
+  const form = useForm<SeoFormValues>({
     resolver: zodResolver(formSchema),
     values: {
-      title: initialData?.title ?? '',
-      overview: initialData?.overview ?? '',
-      description: initialData?.description ?? '',
+      metaTitle: initialData?.metaTitle ?? '',
+      metaKeyword: initialData?.metaKeyword ?? '',
+      metaDescription: initialData?.metaDescription ?? '',
     }
   });
 
@@ -41,7 +41,7 @@ export default function GeneralForm({
   const toastMessage = initialData ? 'Brand updated.' : 'Brand created.';
   const action = initialData ? 'Save changes' : 'Create';
 
-  const onSubmit = async (data: GeneralFormValues) => {
+  const onSubmit = async (data: SeoFormValues) => {
 
   };
 
@@ -53,12 +53,12 @@ export default function GeneralForm({
 
           <FormField
             control={form.control}
-            name="title"
+            name="metaTitle"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Title <span className="text-red-600">*</span></FormLabel>
+                <FormLabel>Meta Title <span className="text-red-600">*</span></FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter title" {...field} />
+                  <Input placeholder="Enter meta title" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -67,12 +67,12 @@ export default function GeneralForm({
 
           <FormField
             control={form.control}
-            name="overview"
+            name="metaKeyword"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Overview <span className="text-red-600">*</span></FormLabel>
+                <FormLabel>Meta Keyword <span className="text-red-600">*</span></FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter overview" {...field} />
+                  <Input placeholder="Enter meta keyword" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -81,10 +81,10 @@ export default function GeneralForm({
 
           <FormField
             control={form.control}
-            name="description"
+            name="metaDescription"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Description <span className="text-red-600">*</span></FormLabel>
+                <FormLabel>Meta Description <span className="text-red-600">*</span></FormLabel>
                 <FormControl>
                   <MinimalTiptapEditor
                     value={field.value}
@@ -92,7 +92,7 @@ export default function GeneralForm({
                     className="w-full"
                     editorContentClassName="p-5"
                     output="html"
-                    placeholder="Type your description here..." 
+                    placeholder="Type your meta description here..."
                     editorClassName="focus:outline-none"
                   />
                 </FormControl>
